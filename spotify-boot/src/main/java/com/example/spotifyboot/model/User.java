@@ -1,6 +1,7 @@
 package com.example.spotifyboot.model;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -21,7 +22,7 @@ public class User {
     @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinTable(name ="user_song",
             joinColumns = {@JoinColumn(name = "user_id")},
-            inverseJoinColumns = {@JoinColumn(name = "song")})
+            inverseJoinColumns = {@JoinColumn(name = "song_id")})
     private List<Song> songs;
 
     public User() {}
@@ -56,6 +57,15 @@ public class User {
 
     public void setSongs(List<Song> songs) {
         this.songs = songs;
+    }
+
+    public List<Song> addSong(Song song) {
+        if (songs == null) {
+            songs =  new ArrayList<>();
+        }
+
+        songs.add(song);
+        return songs;
     }
 
 }
