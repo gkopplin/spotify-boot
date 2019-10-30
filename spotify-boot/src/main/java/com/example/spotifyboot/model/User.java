@@ -68,4 +68,12 @@ public class User {
         return songs;
     }
 
+    public List<Song> removeSong(Song song) {
+        if (songs == null) {
+            songs = new ArrayList<>();
+        }
+        songs.remove(song);
+        return songs;
+    }
+
 }

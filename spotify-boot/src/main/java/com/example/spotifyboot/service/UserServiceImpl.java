@@ -50,9 +50,18 @@ public class UserServiceImpl implements UserService{
         User fetchedUser = userRepository.findById(userId).orElseThrow(ChangeSetPersister.NotFoundException::new);
         Song fetchedSong = songRepository.findById(songId).orElseThrow(ChangeSetPersister.NotFoundException::new);
 
-        System.out.println(songId);
-        System.out.println(fetchedSong.getId());
         fetchedUser.addSong(fetchedSong);
+        userRepository.save(fetchedUser);
+
+        return fetchedUser.getSongs();
+    }
+
+    @Override
+    public List<Song> removeSong(Long userId, Long songId) throws ChangeSetPersister.NotFoundException {
+        User fetchedUser = userRepository.findById(userId).orElseThrow(ChangeSetPersister.NotFoundException::new);
+        Song fetchedSong = songRepository.findById(songId).orElseThrow(ChangeSetPersister.NotFoundException::new);
+
+        fetchedUser.removeSong(fetchedSong);
         userRepository.save(fetchedUser);
 
         return fetchedUser.getSongs();
