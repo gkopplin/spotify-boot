@@ -14,4 +14,5 @@ public interface UserService {
     public void updateUser(User user);
     public List<Song> addSong(Long userId, Long songId) throws ChangeSetPersister.NotFoundException;
     public List<Song> removeSong(Long userId, Long songId) throws ChangeSetPersister.NotFoundException;
+    public List<Song> getSongs(Long userId) throws ChangeSetPersister.NotFoundException;
 }

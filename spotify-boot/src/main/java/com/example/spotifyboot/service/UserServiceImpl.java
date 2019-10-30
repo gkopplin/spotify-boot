@@ -66,4 +66,12 @@ public class UserServiceImpl implements UserService{
 
         return fetchedUser.getSongs();
     }
+
+    @Override
+    public List<Song> getSongs(Long userId) throws ChangeSetPersister.NotFoundException {
+        User fetchedUser = userRepository.findById(userId).orElseThrow(ChangeSetPersister.NotFoundException::new);
+
+        return fetchedUser.getSongs();
+    }
+
 }
