@@ -16,7 +16,7 @@ public class User {
     @Column(unique =true)
     private String username;
 
-    @Column(unique =true)
+    @Column
     private String password;
 
     @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})

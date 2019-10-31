@@ -41,7 +41,7 @@ public class UserController {
         return userService.addSong(userId, songId);
     }
 
-    @DeleteMapping("/user/{userId}/song/{songId}")
+    @PutMapping("/user/{userId}/song/{songId}")
     public List<Song> removeSong(@PathVariable Long userId, @PathVariable Long songId) throws ChangeSetPersister.NotFoundException {
         return userService.removeSong(userId, songId);
     }
