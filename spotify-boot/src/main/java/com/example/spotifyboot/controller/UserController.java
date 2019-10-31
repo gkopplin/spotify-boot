@@ -23,8 +23,8 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public User signup(@RequestBody User newUser){
-        return userService.signup(newUser);
+    public ResponseEntity<?> signup(@RequestBody User newUser){
+        return ResponseEntity.ok( new JwtResponse(userService.login(newUser)));
     }
 
     @PostMapping("/login")
