@@ -24,6 +24,11 @@ public class User {
             inverseJoinColumns = {@JoinColumn(name = "song")})
     private List<Song> songs;
 
+    @ManyToOne(cascade = {CascadeType.DETACH,
+            CascadeType.MERGE, CascadeType.REFRESH})
+    @JoinColumn(name = "user_role_id", nullable = false)
+    private UserRole userRole;
+
     public User() {}
 
     public Long getId() {
@@ -58,4 +63,11 @@ public class User {
         this.songs = songs;
     }
 
+    public UserRole getUserRole() {
+        return userRole;
+    }
+
+    public void setUserRole(UserRole userRole) {
+        this.userRole = userRole;
+    }
 }
