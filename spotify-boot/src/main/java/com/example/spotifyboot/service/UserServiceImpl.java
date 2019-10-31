@@ -49,10 +49,15 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public User signup(User user) {
+    public String signup(User user) {
         UserRole userRole = userRoleService.getUserRole(user.getUserRole().getName());
         user.setUserRole(userRole);
-        return userRepository.save(user);
+        if (userRepository.save(user) != null) {
+            UserDetails userDetails = loadUserByUsername(user.getUsername());
+            return jwtUtil.generateToken(userDetails);
+        }
+
+        return null;
     }
 
     @Override

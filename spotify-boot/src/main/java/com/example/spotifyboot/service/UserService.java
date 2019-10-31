@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface UserService extends UserDetailsService {
     public Iterable<User> listUsers();
-    public User signup(User user);
+    public String signup(User user);
     public String login(User user);
     public void deleteUser(Long userId);
     public void updateUser(User user);

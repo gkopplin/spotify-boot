@@ -1,5 +1,5 @@
-INSERT INTO user_role (role_name) VALUES ('ROLE_ADMIN');
-INSERT INTO user_role (role_name) VALUES ('ROLE_USER');
+INSERT INTO user_role (name) VALUES ('ROLE_ADMIN');
+INSERT INTO user_role (name) VALUES ('ROLE_USER');
 
 INSERT INTO users (username, password, user_role_id) VALUES ('foo', 'bar', 1);
 INSERT INTO users (username, password, user_role_id) VALUES ('foo2', 'bar', 2);
