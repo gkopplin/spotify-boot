@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserRoleRepository extends CrudRepository<UserRole, Long> {
-    @Query("FROM UserRole u WHERE u.roleName = ?1")
-    public UserRole findByName(String roleName);
+    @Query("FROM UserRole u WHERE u.name = ?1")
+    public UserRole findByName(String name);
 
 }

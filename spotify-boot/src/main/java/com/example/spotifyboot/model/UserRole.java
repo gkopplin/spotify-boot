@@ -19,7 +19,7 @@ public class UserRole {
     private List<User> users;
 
     @Column(unique = true, nullable = false)
-    private String roleName;
+    private String name;
 
     public void addUser(User user) {
         if(users == null) {
@@ -37,12 +37,12 @@ public class UserRole {
         this.id = id;
     }
 
-    public String getRoleName() {
-        return roleName;
+    public String getName() {
+        return name;
     }
 
-    public void setRoleName(String roleName) {
-        this.roleName = roleName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public List<User> getUsers() {

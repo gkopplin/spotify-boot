@@ -1,11 +1,13 @@
 package com.example.spotifyboot.controller;
 
+import com.example.spotifyboot.model.JwtResponse;
 import com.example.spotifyboot.model.Song;
 import com.example.spotifyboot.model.User;
 import com.example.spotifyboot.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,8 +28,8 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public User login(@RequestBody User newUser){
-        return userService.login(newUser);
+    public ResponseEntity<?> login(@RequestBody User newUser){
+        return ResponseEntity.ok(new JwtResponse(userService.login(newUser)));
     }
 
     @DeleteMapping("/user/{userId}")
@@ -41,7 +43,7 @@ public class UserController {
         return userService.addSong(userId, songId);
     }
 
-    @PutMapping("/user/{userId}/song/{songId}")
+    @DeleteMapping("/user/{userId}/song/{songId}")
     public List<Song> removeSong(@PathVariable Long userId, @PathVariable Long songId) throws ChangeSetPersister.NotFoundException {
         return userService.removeSong(userId, songId);
     }

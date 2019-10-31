@@ -1,6 +1,7 @@
 package com.example.spotifyboot.config;
 
 import com.example.spotifyboot.service.UserService;
+import com.example.spotifyboot.util.JwtRequestFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -23,6 +25,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    JwtRequestFilter jwtRequestFilter;
 
     public void configureGlobalSecurity(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userService);
@@ -50,13 +55,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
         http.csrf().disable()
             .authorizeRequests()
             .antMatchers("/signup/**", "/login/**").permitAll()
+            .antMatchers("/user/**/song/**").authenticated()
+            .mvcMatchers(HttpMethod.DELETE, "/user/**").hasRole("ADMIN")
             .antMatchers("/user/**","/song/**").authenticated()
             .antMatchers("/role/**").hasRole("ADMIN")
-            .mvcMatchers(HttpMethod.DELETE, "/user/**").hasRole("ADMIN")
             .and()
             .cors()
             .and()
             .httpBasic();
+
+        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
 }
 

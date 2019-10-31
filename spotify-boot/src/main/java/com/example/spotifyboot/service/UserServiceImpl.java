@@ -6,6 +6,7 @@ import com.example.spotifyboot.model.UserRole;
 import com.example.spotifyboot.reposistory.SongRepository;
 import com.example.spotifyboot.reposistory.UserRepository;
 import com.example.spotifyboot.reposistory.UserRoleRepository;
+import com.example.spotifyboot.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.crossstore.ChangeSetPersister;
@@ -36,6 +37,9 @@ public class UserServiceImpl implements UserService{
     SongRepository songRepository;
 
     @Autowired
+    JwtUtil jwtUtil;
+
+    @Autowired
     @Qualifier("encoder")
     PasswordEncoder bCryptPasswordEncoder;
 
@@ -46,14 +50,18 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public User signup(User user) {
-        UserRole userRole = userRoleService.getUserRole(user.getUserRole().getRoleName());
+        UserRole userRole = userRoleService.getUserRole(user.getUserRole().getName());
         user.setUserRole(userRole);
         return userRepository.save(user);
     }
 
     @Override
-    public User login(User user) {
-        return userRepository.login(user.getUsername(), user.getPassword());
+    public String login(User user) {
+        if (userRepository.login(user.getUsername(), user.getPassword()) != null) {
+            UserDetails userDetails = loadUserByUsername(user.getUsername());
+            return jwtUtil.generateToken(userDetails);
+        }
+        return null;
     }
 
     @Override
@@ -103,7 +111,7 @@ public class UserServiceImpl implements UserService{
             throw new UsernameNotFoundException("User null");
 
         return new org.springframework.security.core.userdetails.User(user.getUsername(), bCryptPasswordEncoder.encode(user.getPassword()),
-                true, true, true, true, new ArrayList<>());
+                true, true, true, true, getGrantedAuthorities(user));
     }
 
     private User getUserByName(String username) {
@@ -113,7 +121,7 @@ public class UserServiceImpl implements UserService{
     private List<GrantedAuthority> getGrantedAuthorities(User user){
         List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
 
-        authorities.add(new SimpleGrantedAuthority(user.getUserRole().getRoleName()));
+        authorities.add(new SimpleGrantedAuthority(user.getUserRole().getName()));
 
         return authorities;
     }
