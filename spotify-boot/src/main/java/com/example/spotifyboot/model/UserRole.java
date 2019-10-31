@@ -14,20 +14,20 @@ public class UserRole {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "userRole", cascade = CascadeType.ALL)
-    private List<User> users;
+//    @JsonIgnore
+//    @OneToMany(mappedBy = "userRole", cascade = CascadeType.ALL)
+//    private List<User> users;
 
     @Column(unique = true, nullable = false)
-    private String roleName;
+    private String name;
 
-    public void addUser(User user) {
-        if(users == null) {
-            users = new ArrayList<>();
-        }
-        users.add(user);
-        user.setUserRole(this);
-    }
+//    public void addUser(User user) {
+//        if(users == null) {
+//            users = new ArrayList<>();
+//        }
+//        users.add(user);
+//        user.setUserRole(this);
+//    }
 
     public Long getId() {
         return id;
@@ -37,20 +37,20 @@ public class UserRole {
         this.id = id;
     }
 
-    public String getRoleName() {
-        return roleName;
+    public String getName() {
+        return name;
     }
 
-    public void setRoleName(String roleName) {
-        this.roleName = roleName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public List<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<User> users) {
-        this.users = users;
-    }
+//    public List<User> getUsers() {
+//        return users;
+//    }
+//
+//    public void setUsers(List<User> users) {
+//        this.users = users;
+//    }
 
 }

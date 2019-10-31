@@ -1,11 +1,13 @@
 package com.example.spotifyboot.controller;
 
+import com.example.spotifyboot.model.JwtResponse;
 import com.example.spotifyboot.model.Song;
 import com.example.spotifyboot.model.User;
 import com.example.spotifyboot.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,13 +23,13 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public User signup(@RequestBody User newUser){
-        return userService.signup(newUser);
+    public ResponseEntity<?> signup(@RequestBody User newUser){
+        return ResponseEntity.ok( new JwtResponse(userService.signup(newUser)));
     }
 
     @PostMapping("/login")
-    public User login(@RequestBody User newUser){
-        return userService.login(newUser);
+    public ResponseEntity<?> login(@RequestBody User newUser){
+        return ResponseEntity.ok(new JwtResponse(userService.login(newUser)));
     }
 
     @DeleteMapping("/user/{userId}")

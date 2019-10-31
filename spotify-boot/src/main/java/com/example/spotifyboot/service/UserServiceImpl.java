@@ -6,10 +6,18 @@ import com.example.spotifyboot.model.UserRole;
 import com.example.spotifyboot.reposistory.SongRepository;
 import com.example.spotifyboot.reposistory.UserRepository;
 import com.example.spotifyboot.reposistory.UserRoleRepository;
+import com.example.spotifyboot.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.crossstore.ChangeSetPersister;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,9 +32,16 @@ public class UserServiceImpl implements UserService{
 
     @Autowired
     UserRoleService userRoleService;
-  
+
     @Autowired
     SongRepository songRepository;
+
+    @Autowired
+    JwtUtil jwtUtil;
+
+    @Autowired
+    @Qualifier("encoder")
+    PasswordEncoder bCryptPasswordEncoder;
 
     @Override
     public Iterable<User> listUsers() {
@@ -34,15 +49,26 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public User signup(User user) {
-        UserRole userRole = userRoleService.getUserRole(user.getUserRole().getRoleName());
+    public String signup(User user) {
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        UserRole userRole = userRoleService.getUserRole(user.getUserRole().getName());
         user.setUserRole(userRole);
-        return userRepository.save(user);
+        if (userRepository.save(user) != null) {
+            UserDetails userDetails = loadUserByUsername(user.getUsername());
+            return jwtUtil.generateToken(userDetails);
+        }
+
+        return null;
     }
 
     @Override
-    public User login(User user) {
-        return userRepository.login(user.getUsername(), user.getPassword());
+    public String login(User user) {
+        User fetchedUser = userRepository.findByName(user.getUsername());
+        if (fetchedUser != null && bCryptPasswordEncoder.matches(user.getPassword(), fetchedUser.getPassword())) {
+            UserDetails userDetails = loadUserByUsername(fetchedUser.getUsername());
+            return jwtUtil.generateToken(userDetails);
+        }
+        return null;
     }
 
     @Override
@@ -84,4 +110,26 @@ public class UserServiceImpl implements UserService{
         return fetchedUser.getSongs();
     }
 
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = getUserByName(username);
+
+        if(user==null)
+            throw new UsernameNotFoundException("User null");
+
+        return new org.springframework.security.core.userdetails.User(user.getUsername(), bCryptPasswordEncoder.encode(user.getPassword()),
+                true, true, true, true, getGrantedAuthorities(user));
+    }
+
+    private User getUserByName(String username) {
+        return userRepository.findByName(username);
+    }
+
+    private List<GrantedAuthority> getGrantedAuthorities(User user){
+        List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+
+        authorities.add(new SimpleGrantedAuthority(user.getUserRole().getName()));
+
+        return authorities;
+    }
 }
