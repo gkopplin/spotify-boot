@@ -10,6 +10,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -20,6 +21,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -39,10 +41,11 @@ public class UserControllerTest {
     private MockMvc mockMvc;
 
     User user = new User();
+    UserRole adminRole = new UserRole();
 
     @Before
     public void init() {
-        UserRole adminRole = new UserRole();
+
         adminRole.setName("ROLE_ADMIN");
 
         user.setUsername("George");
@@ -63,6 +66,29 @@ public class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().json("[{\"id\":null,\"username\":\"George\",\"password\":\"Clooney\",\"songs\":null,\"userRole\":{\"id\":null,\"name\":\"ROLE_ADMIN\"}}]"))
                 .andReturn();
+    }
+
+    @Test
+    public void login_Success() throws Exception{
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .post("/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(createUserInJson("joe","abc", adminRole.getName()));
+
+        when(userService.login(any())).thenReturn("123456");
+
+        MvcResult result = mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(content().json("{\"token\":\"123456\"}"))
+                .andReturn();
+
+    }
+
+    private static String createUserInJson (String name, String password, String roleName) {
+        return "{ \"username\": \"" + name + "\", " +
+                "\"password\":\"" + password + "\", " +
+                "\"userRole\": { \"name\": \"" + roleName +"\" }}";
     }
 }
 
