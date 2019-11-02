@@ -48,8 +48,8 @@ public class UserControllerTest {
 
         adminRole.setName("ROLE_ADMIN");
 
-        user.setUsername("George");
-        user.setPassword("Clooney");
+        user.setUsername("george");
+        user.setPassword("clooney");
         user.setUserRole(adminRole);
     }
 
@@ -64,17 +64,17 @@ public class UserControllerTest {
 
         MvcResult result = mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
-                .andExpect(content().json("[{\"id\":null,\"username\":\"George\",\"password\":\"Clooney\",\"songs\":null,\"userRole\":{\"id\":null,\"name\":\"ROLE_ADMIN\"}}]"))
+                .andExpect(content().json("[{\"id\":null,\"username\":\"george\",\"password\":\"clooney\",\"songs\":null,\"userRole\":{\"id\":null,\"name\":\"ROLE_ADMIN\"}}]"))
                 .andReturn();
     }
 
     @Test
-    public void login_Success() throws Exception{
+    public void login_User_Success() throws Exception{
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post("/login")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(createUserInJson("joe","abc", adminRole.getName()));
+                .content(createUserInJson("george","clooney", adminRole.getName()));
 
         when(userService.login(any())).thenReturn("123456");
 
@@ -82,7 +82,38 @@ public class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().json("{\"token\":\"123456\"}"))
                 .andReturn();
+    }
 
+    @Test
+    public void signup_User_Success() throws Exception{
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .post("/signup")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(createUserInJson("george","clooney", adminRole.getName()));
+
+        when(userService.signup(any())).thenReturn("123456");
+
+        MvcResult result = mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(content().json("{\"token\":\"123456\"}"))
+                .andReturn();
+    }
+
+    @Test
+    @WithMockUser(username = "batman", password = "bat", roles = {"ADMIN"})
+    public void deleteUser_Success() throws Exception{
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .delete("/user/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(createUserInJson("george","clooney", adminRole.getName()));
+
+        MvcResult result = mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andReturn();
+
+        System.out.println(result.getResponse().getContentAsString());
     }
 
     private static String createUserInJson (String name, String password, String roleName) {
