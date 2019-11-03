@@ -121,11 +121,11 @@ public class UserServiceImpl implements UserService{
                 true, true, true, true, getGrantedAuthorities(user));
     }
 
-    private User getUserByName(String username) {
+    public User getUserByName(String username) {
         return userRepository.findByName(username);
     }
 
-    private List<GrantedAuthority> getGrantedAuthorities(User user){
+    public List<GrantedAuthority> getGrantedAuthorities(User user){
         List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
 
         authorities.add(new SimpleGrantedAuthority(user.getUserRole().getName()));
