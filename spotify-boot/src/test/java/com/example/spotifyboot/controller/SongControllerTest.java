@@ -55,20 +55,19 @@ public class SongControllerTest {
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post("/song")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(createSongAsJson(song.getId(), song.getTitle(), song.getLength()));
+                .content(createSongAsJson("Bohemian Rhapsody", 6l));
 
         when(songService.createSong(any())).thenReturn(song);
 
         MvcResult result = mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
-                .andExpect(content().json(createSongAsJson(song.getId(), song.getTitle(), song.getLength())))
+                .andExpect(content().json("{\"title\":\"Bohemian Rhapsody\",\"length\":6}"))
                 .andReturn();
 
         assertNotNull(result);
     }
-    private static String createSongAsJson (Long id, String title, Long length) {
-        return "{ \"id\":\"" + id + "\", " +
-               "\"title\":\"" + title + "\", " +
+    private static String createSongAsJson (String title, Long length) {
+        return "{ \"title\":\"" + title + "\", " +
                "\"length\":\"" + length +"\"}";
     }
 }
