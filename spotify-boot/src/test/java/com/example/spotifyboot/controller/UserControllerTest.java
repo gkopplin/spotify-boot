@@ -1,5 +1,6 @@
 package com.example.spotifyboot.controller;
 
+import com.example.spotifyboot.model.Song;
 import com.example.spotifyboot.model.User;
 import com.example.spotifyboot.model.UserRole;
 import com.example.spotifyboot.service.UserService;
@@ -21,7 +22,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.ArrayList;
 import java.util.List;
 
+import static junit.framework.TestCase.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -30,6 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(UserController.class)
 public class UserControllerTest {
     private List<User> users = new ArrayList<User>();
+    private List<Song> songs = new ArrayList<Song>();
 
     @MockBean
     UserService userService;
@@ -42,6 +46,7 @@ public class UserControllerTest {
 
     User user = new User();
     UserRole adminRole = new UserRole();
+    Song song = new Song();
 
     @Before
     public void init() {
@@ -51,6 +56,13 @@ public class UserControllerTest {
         user.setUsername("george");
         user.setPassword("clooney");
         user.setUserRole(adminRole);
+
+        song.setId(1l);
+        song.setTitle("We Will Rock You");
+        song.setLength(2l);
+        songs.add(song);
+
+        user.setSongs(songs);
     }
 
     @Test
@@ -114,6 +126,51 @@ public class UserControllerTest {
                 .andReturn();
 
         System.out.println(result.getResponse().getContentAsString());
+    }
+
+    @Test
+    @WithMockUser(username = "george", password = "clooney", roles = {"ADMIN"})
+    public void addSong_UserSongs_Success() throws Exception {
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .put("/user/1/song/1");
+
+        when(userService.addSong(anyLong(),any())).thenReturn(user.getSongs());
+
+        MvcResult result = mockMvc.perform(requestBuilder)
+                .andExpect(content().json("[{\"id\":1,\"title\":\"We Will Rock You\",\"length\":2}]"))
+                .andExpect(status().isOk())
+                .andReturn();
+    }
+
+    @Test
+    @WithMockUser(username = "george", password = "clooney", roles = {"ADMIN"})
+    public void removeSong_UserSongs_Success() throws Exception {
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .delete("/user/1/song/1");
+
+        when(userService.removeSong(anyLong(), anyLong())).thenReturn(new ArrayList<Song>());
+
+        MvcResult result = mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(content().json("[]"))
+                .andReturn();
+    }
+
+    @Test
+    @WithMockUser(username = "george", password = "clooney", roles = {"ADMIN"})
+    public void getSongs_User_Success() throws Exception {
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/user/1/song");
+
+        when(userService.getSongs(anyLong())).thenReturn(user.getSongs());
+
+        MvcResult result = mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andReturn();
+
+        System.out.println(result.getResponse().getContentAsString());
+
+        assertNotNull(result);
     }
 
     private static String createUserInJson (String name, String password, String roleName) {
