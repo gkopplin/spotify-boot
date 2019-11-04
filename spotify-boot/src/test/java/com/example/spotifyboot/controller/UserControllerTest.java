@@ -76,7 +76,7 @@ public class UserControllerTest {
 
         MvcResult result = mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
-                .andExpect(content().json("[{\"id\":null,\"username\":\"george\",\"password\":\"clooney\",\"songs\":null,\"userRole\":{\"id\":null,\"name\":\"ROLE_ADMIN\"}}]"))
+                .andExpect(content().json("[{\"id\":null,\"username\":\"george\",\"password\":\"clooney\",\"songs\":[{\"id\":1,\"title\":\"We Will Rock You\",\"length\":2}],\"userRole\":{\"id\":null,\"name\":\"ROLE_ADMIN\"}}]"))
                 .andReturn();
     }
 
