@@ -63,8 +63,10 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public String login(User user) {
+        String originalPassword = user.getPassword();
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         User fetchedUser = userRepository.findByName(user.getUsername());
-        if (fetchedUser != null && bCryptPasswordEncoder.matches(user.getPassword(), fetchedUser.getPassword())) {
+        if (fetchedUser != null && bCryptPasswordEncoder.matches(originalPassword, fetchedUser.getPassword())) {
             UserDetails userDetails = loadUserByUsername(fetchedUser.getUsername());
             return jwtUtil.generateToken(userDetails);
         }
@@ -126,10 +128,14 @@ public class UserServiceImpl implements UserService{
     }
 
     public List<GrantedAuthority> getGrantedAuthorities(User user){
-        List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+        List<GrantedAuthority> authorities = returnEmptyList();
 
         authorities.add(new SimpleGrantedAuthority(user.getUserRole().getName()));
 
         return authorities;
+    }
+
+    public List<GrantedAuthority> returnEmptyList() {
+        return new ArrayList<>();
     }
 }

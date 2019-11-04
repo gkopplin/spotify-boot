@@ -5,12 +5,14 @@ import com.example.spotifyboot.model.User;
 import com.example.spotifyboot.model.UserRole;
 import com.example.spotifyboot.reposistory.SongRepository;
 import com.example.spotifyboot.reposistory.UserRepository;
+import com.example.spotifyboot.reposistory.UserRoleRepository;
 import com.example.spotifyboot.util.JwtUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.springframework.data.crossstore.ChangeSetPersister;
@@ -112,15 +114,25 @@ public class UserServiceTest {
         when(userRoleService.getUserRole(any())).thenReturn(userRole);
         when(userRepository.save(any())).thenReturn(user);
         authorities = new ArrayList<GrantedAuthority>();
-//        UserDetails userDetails = new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
-//                true, true, true, true, authorities);
         when(userService.getUserByName(any())).thenReturn(user);
-//        when(userService.getGrantedAuthorities(any())).thenReturn(authorities);
         when(userService.loadUserByUsername(any())).thenReturn(null);
         when(jwtUtil.generateToken(any())).thenReturn("12345");
-//        String token = userService.signup(user);
+        String token = userService.signup(user);
 
-//        assertEquals(token, "12345");
+        assertEquals(token, "12345");
+    }
+
+    @Test
+    public void login_User_Success() {
+        when(userRepository.findByName(any())).thenReturn(user);
+        when(passwordEncoder.matches(any(),any())).thenReturn(true);
+        authorities = new ArrayList<GrantedAuthority>();
+        when(userService.getUserByName(any())).thenReturn(user);
+        when(userService.loadUserByUsername(any())).thenReturn(null);
+        when(jwtUtil.generateToken(any())).thenReturn("12345");
+        String token = userService.login(user);
+
+        assertEquals(token, "12345");
     }
 
     @Test
