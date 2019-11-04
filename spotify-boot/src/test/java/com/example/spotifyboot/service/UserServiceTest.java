@@ -78,6 +78,7 @@ public class UserServiceTest {
         song.setTitle("Radio Ga Ga");
         song.setLength(5l);
         songs.add(song);
+        user.setSongs(songs);
     }
 
     @Test
@@ -154,27 +155,25 @@ public class UserServiceTest {
     }
 
     @Test
-    @WithMockUser(roles={"ADMIN"})
     public void addSong_UserSongs_Success() throws ChangeSetPersister.NotFoundException {
-        System.out.println(songs.size());
-//        try {
-            when(userRepository.findById(anyLong())).thenReturn(java.util.Optional.of(user));
-            when(songRepository.findById(anyLong())).thenReturn(java.util.Optional.of(song));
-//        when(userRepository.save(any())).thenReturn(user.getSongs());
-//            when(userRepository.save(any())).thenReturn(songs);
-            List<Song> songList = userService.addSong(1l, 1l);
+        when(userRepository.findById(anyLong())).thenReturn(java.util.Optional.of(user));
+        when(songRepository.findById(anyLong())).thenReturn(java.util.Optional.of(song));
 
-            System.out.println(songList);
-            assertEquals(songs, songList);
-//        } catch (ChangeSetPersister.NotFoundException e){
-//            System.out.println(e.getMessage());
-//            System.out.println("ChangeSetPersister error!!!");
-//        }
+        List<Song> songList = userService.addSong(1l, 1l);
+
+        assertEquals(songs, songList);
+        assertEquals(songs.size(), songList.size());
     }
 
     @Test
-    public void removeSong_UserSongs_Success() {
+    public void removeSong_UserSongs_Success() throws ChangeSetPersister.NotFoundException {
+        when(userRepository.findById(anyLong())).thenReturn(java.util.Optional.of(user));
+        when(songRepository.findById(anyLong())).thenReturn(java.util.Optional.of(song));
 
+        List<Song> songList = userService.removeSong(1l, 1l);
+
+        assertEquals(songs, songList);
+        assertEquals(songs.size(), songList.size());
     }
 
     @Test
@@ -185,8 +184,8 @@ public class UserServiceTest {
 
         foundSongs = userService.getSongs(1l);
 
-        System.out.println(foundSongs.toString());
         assertEquals(songs, foundSongs);
+        assertEquals(songs.size(), foundSongs.size());
 
     }
 }
