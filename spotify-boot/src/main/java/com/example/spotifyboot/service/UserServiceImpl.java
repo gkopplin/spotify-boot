@@ -3,9 +3,9 @@ package com.example.spotifyboot.service;
 import com.example.spotifyboot.model.Song;
 import com.example.spotifyboot.model.User;
 import com.example.spotifyboot.model.UserRole;
-import com.example.spotifyboot.reposistory.SongRepository;
-import com.example.spotifyboot.reposistory.UserRepository;
-import com.example.spotifyboot.reposistory.UserRoleRepository;
+import com.example.spotifyboot.repository.SongRepository;
+import com.example.spotifyboot.repository.UserRepository;
+import com.example.spotifyboot.repository.UserRoleRepository;
 import com.example.spotifyboot.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService{
