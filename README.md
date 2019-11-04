@@ -1,6 +1,8 @@
 # spotify-boot API
 ___Grant Kopplin & Nate Tuvera___
 
+ A Spring Boot Spotify clone API for Adding Users, Songs, and Songs to Users
+
 ### Technologies Used:
 - Spring Boot Framework
   - Spring Security
