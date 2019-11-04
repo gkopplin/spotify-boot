@@ -1,4 +1,4 @@
-package com.example.spotifyboot.reposistory;
+package com.example.spotifyboot.repository;
 
 import com.example.spotifyboot.model.UserRole;
 import org.springframework.data.jpa.repository.Query;

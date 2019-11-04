@@ -1,7 +1,7 @@
 package com.example.spotifyboot.service;
 
 import com.example.spotifyboot.model.UserRole;
-import com.example.spotifyboot.reposistory.UserRoleRepository;
+import com.example.spotifyboot.repository.UserRoleRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

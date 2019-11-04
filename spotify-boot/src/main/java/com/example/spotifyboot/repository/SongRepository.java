@@ -1,4 +1,4 @@
-package com.example.spotifyboot.reposistory;
+package com.example.spotifyboot.repository;
 
 import com.example.spotifyboot.model.Song;
 import org.springframework.data.repository.CrudRepository;
